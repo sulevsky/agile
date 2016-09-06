@@ -16,7 +16,7 @@ public class ImageProcessorTest {
         Rectangle f = new Rectangle(1, 1, 1, 1);
         Rectangle s = new Rectangle(1, 2, 1, 1);
         List<Rectangle> recs = Arrays.asList(f, s);
-        ImageProcessor imageProcessor = new ImageProcessor();
+        ImageProcessor imageProcessor = new ImageProcessor(differenceFinder);
 
         List<Rectangle> merged = imageProcessor.mergeRectangles(recs);
         Assert.assertTrue(merged.size() == 1);
@@ -28,7 +28,7 @@ public class ImageProcessorTest {
         Rectangle f = new Rectangle(1, 1, 1, 1);
         Rectangle s = new Rectangle(1, 3, 1, 1);
         List<Rectangle> recs = Arrays.asList(f, s);
-        ImageProcessor imageProcessor = new ImageProcessor();
+        ImageProcessor imageProcessor = new ImageProcessor(differenceFinder);
 
         List<Rectangle> merged = imageProcessor.mergeRectangles(recs);
         Assert.assertTrue(merged.size() == 2);
@@ -46,7 +46,7 @@ public class ImageProcessorTest {
         combinations.add(Arrays.asList(r2, r3, r1));
         combinations.add(Arrays.asList(r3, r1, r2));
         combinations.add(Arrays.asList(r3, r2, r1));
-        ImageProcessor imageProcessor = new ImageProcessor();
+        ImageProcessor imageProcessor = new ImageProcessor(differenceFinder);
 
         for (List<Rectangle> combination : combinations) {
             List<Rectangle> merged = imageProcessor.mergeRectangles(combination);

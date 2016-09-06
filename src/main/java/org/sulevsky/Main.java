@@ -2,6 +2,7 @@ package org.sulevsky;
 
 public class Main {
     public static void main(String[] args) {
+
         if (args.length != 3) {
             System.out.println("Usage: pathToOriginal pathToCopy pathToResult");
             System.exit(1);
