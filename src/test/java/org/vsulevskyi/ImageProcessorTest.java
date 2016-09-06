@@ -3,6 +3,7 @@ package org.vsulevskyi;
 import org.junit.Assert;
 import org.junit.Test;
 import org.sulevsky.ImageProcessor;
+import org.sulevsky.RectanglesMerger;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -10,15 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ImageProcessorTest {
+    RectanglesMerger rectanglesMerger = new RectanglesMerger();
 
     @Test
     public void shouldMergeTouchingRectangles() {
         Rectangle f = new Rectangle(1, 1, 1, 1);
         Rectangle s = new Rectangle(1, 2, 1, 1);
         List<Rectangle> recs = Arrays.asList(f, s);
-        ImageProcessor imageProcessor = new ImageProcessor(differenceFinder);
 
-        List<Rectangle> merged = imageProcessor.mergeRectangles(recs);
+
+        List<Rectangle> merged = rectanglesMerger.mergeRectangles(recs);
         Assert.assertTrue(merged.size() == 1);
         Assert.assertTrue(merged.get(0).equals(new Rectangle(1, 1, 1, 2)));
     }
@@ -28,9 +30,8 @@ public class ImageProcessorTest {
         Rectangle f = new Rectangle(1, 1, 1, 1);
         Rectangle s = new Rectangle(1, 3, 1, 1);
         List<Rectangle> recs = Arrays.asList(f, s);
-        ImageProcessor imageProcessor = new ImageProcessor(differenceFinder);
 
-        List<Rectangle> merged = imageProcessor.mergeRectangles(recs);
+        List<Rectangle> merged = rectanglesMerger.mergeRectangles(recs);
         Assert.assertTrue(merged.size() == 2);
     }
 
@@ -46,13 +47,11 @@ public class ImageProcessorTest {
         combinations.add(Arrays.asList(r2, r3, r1));
         combinations.add(Arrays.asList(r3, r1, r2));
         combinations.add(Arrays.asList(r3, r2, r1));
-        ImageProcessor imageProcessor = new ImageProcessor(differenceFinder);
 
         for (List<Rectangle> combination : combinations) {
-            List<Rectangle> merged = imageProcessor.mergeRectangles(combination);
+            List<Rectangle> merged = rectanglesMerger.mergeRectangles(combination);
             Assert.assertTrue(merged.size() == 1);
             Assert.assertTrue(merged.get(0).equals(new Rectangle(1, 1, 1, 3)));
-
         }
     }
 
