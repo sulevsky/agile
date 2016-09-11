@@ -1,7 +1,10 @@
 package org.sulevsky.file;
 
-import com.mongodb.gridfs.GridFSFile;
+import com.google.common.io.ByteStreams;
+import com.mongodb.gridfs.GridFSDBFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,14 +15,12 @@ import org.sulevsky.repository.FileRepository;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 @Service
 public class FileStorageService {
 
     private final FileRepository fileRepository;
     private final DescriptionService descriptionService;
-
 
     @Autowired
     public FileStorageService(FileRepository fileRepository,
@@ -28,9 +29,7 @@ public class FileStorageService {
         this.descriptionService = descriptionService;
     }
 
-
-    public FileDescription storeFile(MultipartFile file) {
-
+    public FileDescription storeFile(MultipartFile file, FileDescription fileDescription) {
         InputStream inputStream;
         try {
             inputStream = file.getInputStream();
@@ -38,23 +37,31 @@ public class FileStorageService {
             throw new FileExtractingException("Could not get file from request", e);
         }
         String internalId = fileRepository.storeFile(inputStream, file.getOriginalFilename());
-        FileDescription fileDescription = createDescription(file, internalId);
-        descriptionService.saveDescription(fileDescription);
+        FileDescription populatedFileDescription = populateDescriptionWithInternalData(file, fileDescription, internalId);
+        descriptionService.saveDescription(populatedFileDescription);
 
         return fileDescription;
     }
 
-    public GridFSFile getFileById(String id) {
-        //TODO combine with description
-//        fileDescriptionRepository.findOne(id);
-        return fileRepository.findFile(id);
+    public ResponseEntity<byte[]> getFileById(String id) {
+        FileDescription fileDescription = descriptionService.findDescription(id);
+        GridFSDBFile gridFSDBFile = fileRepository.findFile(fileDescription.getFileMetadata().getInternalId());
+        String contentType = fileDescription.getFileMetadata().getMimeType();
+
+        byte[] binary = null;
+        try {
+            binary = ByteStreams.toByteArray(gridFSDBFile.getInputStream());
+        } catch (IOException e) {
+            throw new FileExtractingException("Failed to extract file", e);
+        }
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(binary);
     }
 
     public FileDescription getFileDescriptionById(String id) {
         return descriptionService.findDescription(id);
     }
 
-    private FileDescription createDescription(MultipartFile file, String internalId) {
+    private FileDescription populateDescriptionWithInternalData(MultipartFile file, FileDescription fileDescription, String internalId) {
 
         byte[] binaryData;
         try {
@@ -62,18 +69,14 @@ public class FileStorageService {
         } catch (IOException e) {
             throw new FileExtractingException("Could not get file from request", e);
         }
-        FileMetadata fileMetadata = FileMetadata
-                .fileMetadata()
-                .withInternalId(internalId)
-                .withFileName(file.getOriginalFilename())
-                .withMimeType(file.getContentType())
-                .withSize(file.getSize())
-                .withFileHash(calculateFileHash(binaryData))
-                .build();
-        return new FileDescription(fileMetadata, new ArrayList<>());//TODO references
+
+        FileMetadata fileMetadata = fileDescription.getFileMetadata();
+        fileMetadata.setInternalId(internalId);
+        fileMetadata.setFileHash(calculateFileHash(binaryData));
+        return fileDescription;
     }
 
-    private String calculateFileHash(byte[] file){
+    private String calculateFileHash(byte[] file) {
         return DigestUtils.md5DigestAsHex(file);
     }
 }

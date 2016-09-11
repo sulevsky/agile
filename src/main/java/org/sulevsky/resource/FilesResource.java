@@ -1,5 +1,6 @@
 package org.sulevsky.resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class FilesResource {
 
     private final FileStorageService fileStorageService;
 
+    @Autowired
     public FilesResource(FileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
     }
@@ -30,13 +32,14 @@ public class FilesResource {
     //        Component interface allows clients to store files by using standard http/web mechanisms preferably POST + multipart/form-data. During storage, file metadata are extracted and persisted alone (like filename, extension, mime type, size). Storing of file results in response with file descriptor - metadata and links.
     @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/store", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public FileDescription storeFile(@RequestPart("file") MultipartFile file) {
+    @RequestMapping(value = "/store", method = RequestMethod.POST, consumes = MediaType.ALL_VALUE)
+    public FileDescription storeFile(@RequestPart("file") MultipartFile file,
+                                     @RequestPart("fileDescription") FileDescription fileDescription) {
         if (file.isEmpty()) {
             throw new EmptyFileException("Empty file");
         }
 
-        return fileStorageService.storeFile(file);
+        return fileStorageService.storeFile(file, fileDescription);
     }
 
 //        Anyone is able to download the file using standard HTTP method for downloads. Clients has ability to force download in browser using standard http headers (e.g image request opens download dialog in browser). Also original attributes are preserved during download as original filename and so on.
@@ -44,12 +47,9 @@ public class FilesResource {
     @ResponseBody
     @RequestMapping(value = "/files/{id}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> getFileById(@PathParam("id") String id) {
-
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.IMAGE_GIF)
-                .body(new byte[2]);
+        return fileStorageService.getFileById(id);
     }
+
 
     //        Sometimes is usefull to get description of a file without downloading it. For this use case component interface provides method to describe the file upon given file id. The result structure (File descriptor) will contain metadata and links to do operations above the file.
     @ResponseBody

@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-
 public class FileDescription {
 
-    private final FileMetadata fileMetadata;
-    private final List<Reference> references;
+    private FileMetadata fileMetadata;
+    private List<Reference> references;
 
-    public FileDescription(FileMetadata fileMetadata,
-                           List<Reference> references) {
+    @JsonCreator
+    public FileDescription(@JsonProperty("fileMetadata") FileMetadata fileMetadata,
+                           @JsonProperty("references") List<Reference> references) {
         this.fileMetadata = fileMetadata;
         this.references = references;
     }

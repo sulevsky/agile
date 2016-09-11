@@ -1,5 +1,6 @@
 package org.sulevsky.repository;
 
+import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.gridfs.GridFSFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -23,9 +24,9 @@ public class FileRepository {
         return file.getId().toString();
     }
 
-    public GridFSFile findFile(String id) {
-        GridFSFile file = gridFsTemplate.findOne(Query.query(Criteria.where(id)));
-        return file;//TODO
+    public GridFSDBFile findFile(String id) {
+        GridFSDBFile file = gridFsTemplate.findOne(Query.query(Criteria.where(id)));
+        return file;
     }
 
 }

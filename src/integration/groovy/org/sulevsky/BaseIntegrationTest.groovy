@@ -13,12 +13,8 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 
-//@SpringBootTest(classes = [Main,FileStorageConfig,MongoDbConfig])
-
-//@SpringApplicationConfiguration(classes = [Main, FileStorageConfig, MongoDbConfig])
 @WebIntegrationTest(["server.port=8081", "application.environment=integration"])
-
-@SpringApplicationConfiguration(classes = [Main,FileStorageConfig,MongoDbConfig])
+@SpringApplicationConfiguration(classes = [Main, FileStorageConfig, MongoDbConfig])
 @ActiveProfiles(["integration"])
 abstract class BaseIntegrationTest extends Specification {
 

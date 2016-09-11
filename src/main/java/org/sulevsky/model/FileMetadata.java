@@ -1,32 +1,32 @@
 package org.sulevsky.model;
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class FileMetadata {
-    private final String internalId;//TODO do not expose
-    private final String fileName;
-    private final String mimeType;
-    private final Long size;
-    private final String fileHash;
-    private final LocalDateTime uploadDateTime;
+    private String internalId;//TODO do not expose
+    private String fileName;
+    private String mimeType;
+    private Long size;
+    private String fileHash;
 
-//    @JsonCreator
-    public FileMetadata(String internalId,
+    @JsonCreator
+    public FileMetadata(@JsonProperty("internalId") String internalId,
                         @JsonProperty("fileName") String fileName,
                         @JsonProperty("mimeType") String mimeType,
                         @JsonProperty("size") Long size,
-                        String fileHash,
-                        @JsonProperty("uploadDateTime") LocalDateTime uploadDateTime) {
+                        @JsonProperty("fileHash") String fileHash
+    ) {
         this.internalId = internalId;
         this.fileName = fileName;
         this.mimeType = mimeType;
         this.size = size;
         this.fileHash = fileHash;
-        this.uploadDateTime = uploadDateTime;
+//TODO        this.uploadDateTime = uploadDateTime;
     }
 
     public String getInternalId() {
@@ -49,12 +49,16 @@ public class FileMetadata {
         return fileHash;
     }
 
-    public LocalDateTime getUploadDateTime() {
-        return uploadDateTime;
-    }
-
     public static Builder fileMetadata() {
         return new Builder();
+    }
+
+    public void setInternalId(String internalId) {
+        this.internalId = internalId;
+    }
+
+    public void setFileHash(String fileHash) {
+        this.fileHash = fileHash;
     }
 
     public static class Builder {
@@ -95,14 +99,14 @@ public class FileMetadata {
             return this;
         }
 
-        public FileMetadata build() {
-            return new FileMetadata(
-                    internalId,
-                    fileName,
-                    mimeType,
-                    size,
-                    fileHash,
-                    uploadDateTime);
-        }
+//        public FileMetadata build() {
+//            return new FileMetadata(
+//                    internalId,
+//                    fileName,
+//                    mimeType,
+//                    size,
+//                    fileHash,
+//                    uploadDateTime);
+//        }
     }
 }

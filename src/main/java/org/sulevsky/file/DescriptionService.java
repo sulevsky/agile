@@ -12,10 +12,11 @@ public class DescriptionService {
         this.fileDescriptionRepository = fileDescriptionRepository;
     }
 
-    public void saveDescription(FileDescription fileDescription){
-
+    public void saveDescription(FileDescription fileDescription) {
+        fileDescriptionRepository.save(fileDescription);
     }
-    public FileDescription findDescription(String id){
-        return null;
+
+    public FileDescription findDescription(String id) {
+        return fileDescriptionRepository.findOne(id);
     }
 }
