@@ -27,10 +27,14 @@ Note: `build/libs/parser.jar` path to built script
 ## Deliverables
 
 (1) Java program that can be run from command line
+link
 
 (2) Source Code for the Java program
+https://github.com/sulevsky/agile
 
 (3) MySQL schema used for the log data
+https://github.com/sulevsky/agile/blob/master/src/main/resources/schema.sql
 
 (4) SQL queries for SQL test
+https://github.com/sulevsky/agile/blob/master/src/main/resources/query.sql
 
