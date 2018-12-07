@@ -27,7 +27,7 @@ Note: `build/libs/parser.jar` path to built script
 ## Deliverables
 
 (1) Java program that can be run from command line
-link
+https://github.com/sulevsky/agile/releases/tag/v1.0
 
 (2) Source Code for the Java program
 https://github.com/sulevsky/agile
