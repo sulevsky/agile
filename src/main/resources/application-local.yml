@@ -1,8 +1,0 @@
-#for test environment
-
-mongo.client.options:
-    hosts: localhost
-    port: 27017
-    database: test
-    username: test
-    password: test
